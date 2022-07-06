@@ -1,34 +1,36 @@
 package br.com.zup.edu.minhasfigurinhas.albuns;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.net.URI;
+
+import javax.transaction.Transactional;
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.transaction.Transactional;
-import javax.validation.Valid;
-import java.net.URI;
-
 @RestController
 public class NovoAlbumController {
 
-    @Autowired
-    private AlbumRepository repository;
+    private final AlbumRepository repository;
+
+    public NovoAlbumController(AlbumRepository repository) {
+        this.repository = repository;
+    }
 
     @Transactional
     @PostMapping("/api/albuns")
-    public ResponseEntity<?> cadastra(@RequestBody @Valid NovoAlbumRequest request, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<?> cadastra(@RequestBody @Valid NovoAlbumRequest request,
+                                      UriComponentsBuilder uriBuilder) {
 
         Album album = request.toModel();
         repository.save(album);
 
-        URI location = uriBuilder.path("/api/albuns/{id}")
-                .buildAndExpand(album.getId())
-                .toUri();
+        URI location = uriBuilder.path("/api/albuns/{id}").buildAndExpand(album.getId()).toUri();
 
-        return ResponseEntity
-                .created(location).build();
+        return ResponseEntity.created(location).build();
     }
+
 }

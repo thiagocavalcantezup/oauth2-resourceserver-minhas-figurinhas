@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-Oauth2ResourceserverMinhasFigurinhasApplication<oauth2-resourceserver-minhas-figurinhas>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "br.com.zup.edu.minhasfigurinhas.Oauth2ResourceserverMinhasFigurinhasApplication",
+      "projectName": "oauth2-resourceserver-minhas-figurinhas",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}

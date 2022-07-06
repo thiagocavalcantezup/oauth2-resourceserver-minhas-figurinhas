@@ -1,10 +1,10 @@
 package br.com.zup.edu.minhasfigurinhas.albuns.detalhamento;
 
-import br.com.zup.edu.minhasfigurinhas.albuns.Album;
+import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
+import br.com.zup.edu.minhasfigurinhas.albuns.Album;
 
 public class DetalhesDoAlbumResponse {
 
@@ -14,13 +14,15 @@ public class DetalhesDoAlbumResponse {
     private String dono;
     private List<DetalheDaFigurinhaResponse> figurinhas;
 
+    public DetalhesDoAlbumResponse() {}
+
     public DetalhesDoAlbumResponse(Album album) {
         this.id = album.getId();
         this.titulo = album.getTitulo();
         this.descricao = album.getDescricao();
         this.dono = album.getDono();
         this.figurinhas = album.getFigurinhas().stream().map(figurinha -> {
-           return new DetalheDaFigurinhaResponse(figurinha);
+            return new DetalheDaFigurinhaResponse(figurinha);
         }).collect(toList());
     }
 
@@ -43,4 +45,5 @@ public class DetalhesDoAlbumResponse {
     public List<DetalheDaFigurinhaResponse> getFigurinhas() {
         return figurinhas;
     }
+
 }

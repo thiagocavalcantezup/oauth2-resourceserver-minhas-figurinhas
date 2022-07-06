@@ -9,6 +9,8 @@ public class AlbumResponse {
     private String descricao;
     private String dono;
 
+    public AlbumResponse() {}
+
     public AlbumResponse(Album album) {
         this.id = album.getId();
         this.titulo = album.getTitulo();
@@ -31,4 +33,5 @@ public class AlbumResponse {
     public String getDono() {
         return dono;
     }
+
 }

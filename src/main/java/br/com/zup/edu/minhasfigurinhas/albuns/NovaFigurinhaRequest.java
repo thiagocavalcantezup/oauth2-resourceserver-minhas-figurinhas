@@ -1,10 +1,10 @@
 package br.com.zup.edu.minhasfigurinhas.albuns;
 
-import org.hibernate.validator.constraints.URL;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.URL;
 
 public class NovaFigurinhaRequest {
 
@@ -15,6 +15,8 @@ public class NovaFigurinhaRequest {
     @URL
     @NotNull
     private String enderecoDaImagem;
+
+    public NovaFigurinhaRequest() {}
 
     public NovaFigurinhaRequest(String descricao, String enderecoDaImagem) {
         this.descricao = descricao;
@@ -28,4 +30,5 @@ public class NovaFigurinhaRequest {
     public String getEnderecoDaImagem() {
         return enderecoDaImagem;
     }
+
 }

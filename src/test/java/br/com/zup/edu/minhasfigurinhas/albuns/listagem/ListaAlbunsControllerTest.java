@@ -1,17 +1,18 @@
 package br.com.zup.edu.minhasfigurinhas.albuns.listagem;
 
-import base.SpringBootIntegrationTest;
-import br.com.zup.edu.minhasfigurinhas.albuns.Album;
-import br.com.zup.edu.minhasfigurinhas.albuns.AlbumRepository;
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import base.SpringBootIntegrationTest;
+import br.com.zup.edu.minhasfigurinhas.albuns.Album;
+import br.com.zup.edu.minhasfigurinhas.albuns.AlbumRepository;
 
 class ListaAlbunsControllerTest extends SpringBootIntegrationTest {
 
@@ -36,12 +37,11 @@ class ListaAlbunsControllerTest extends SpringBootIntegrationTest {
 
         // ação e validação
         mockMvc.perform(GET("/api/albuns"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].titulo").value("CDZ"))
-                .andExpect(jsonPath("$[1].titulo").value("DBZ"))
-                .andExpect(jsonPath("$[2].titulo").value("Naruto"))
-                ;
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$", hasSize(3)))
+               .andExpect(jsonPath("$[0].titulo").value("CDZ"))
+               .andExpect(jsonPath("$[1].titulo").value("DBZ"))
+               .andExpect(jsonPath("$[2].titulo").value("Naruto"));
     }
 
     @Test
@@ -51,9 +51,8 @@ class ListaAlbunsControllerTest extends SpringBootIntegrationTest {
 
         // ação e validação
         mockMvc.perform(GET("/api/albuns"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isEmpty())
-                ;
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$").isEmpty());
     }
 
 }

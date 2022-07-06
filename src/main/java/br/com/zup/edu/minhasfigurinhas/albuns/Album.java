@@ -1,10 +1,17 @@
 package br.com.zup.edu.minhasfigurinhas.albuns;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 public class Album {
@@ -20,14 +27,11 @@ public class Album {
     @Column(nullable = false, updatable = false)
     private String dono;
 
-    @OneToMany(
-        mappedBy = "album",
-        cascade = { CascadeType.PERSIST, CascadeType.REMOVE }
-    )
+    @OneToMany(mappedBy = "album", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Figurinha> figurinhas = new ArrayList<>();
 
     @Deprecated
-    public Album(){}
+    public Album() {}
 
     public Album(String titulo, String descricao, String dono) {
         this.titulo = titulo;
@@ -66,7 +70,7 @@ public class Album {
     /**
      * Adiciona novas figurinhas ao album
      */
-    public void adiciona(Figurinha...figurinhas) {
+    public void adiciona(Figurinha... figurinhas) {
         Arrays.stream(figurinhas).forEach(figurinha -> {
             adiciona(figurinha);
         });

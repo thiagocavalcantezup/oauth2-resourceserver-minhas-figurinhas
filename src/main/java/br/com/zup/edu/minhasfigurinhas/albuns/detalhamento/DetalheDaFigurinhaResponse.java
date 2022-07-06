@@ -8,6 +8,8 @@ public class DetalheDaFigurinhaResponse {
     private String descricao;
     private String enderecoDaImagem;
 
+    public DetalheDaFigurinhaResponse() {}
+
     public DetalheDaFigurinhaResponse(Figurinha figurinha) {
         this.id = figurinha.getId();
         this.descricao = figurinha.getDescricao();
@@ -25,4 +27,5 @@ public class DetalheDaFigurinhaResponse {
     public String getEnderecoDaImagem() {
         return enderecoDaImagem;
     }
+
 }

@@ -1,10 +1,11 @@
 package br.com.zup.edu.minhasfigurinhas.albuns;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import java.util.List;
 
 public class NovoAlbumRequest {
 
@@ -19,7 +20,10 @@ public class NovoAlbumRequest {
     @NotEmpty
     private List<NovaFigurinhaRequest> figurinhas;
 
-    public NovoAlbumRequest(String titulo, String descricao, List<NovaFigurinhaRequest> figurinhas) {
+    public NovoAlbumRequest() {}
+
+    public NovoAlbumRequest(String titulo, String descricao,
+                            List<NovaFigurinhaRequest> figurinhas) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.figurinhas = figurinhas;
@@ -45,4 +49,5 @@ public class NovoAlbumRequest {
         });
         return album;
     }
+
 }

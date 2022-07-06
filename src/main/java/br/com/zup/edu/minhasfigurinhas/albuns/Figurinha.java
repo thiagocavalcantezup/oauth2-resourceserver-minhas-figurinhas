@@ -4,7 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import java.net.URI;
 
 @Entity
 public class Figurinha {
@@ -20,7 +19,7 @@ public class Figurinha {
     private Album album;
 
     @Deprecated
-    public Figurinha(){}
+    public Figurinha() {}
 
     public Figurinha(String descricao, String enderecoDaImagem) {
         this.descricao = descricao;
@@ -46,4 +45,5 @@ public class Figurinha {
     public void setAlbum(Album album) {
         this.album = album;
     }
+
 }
