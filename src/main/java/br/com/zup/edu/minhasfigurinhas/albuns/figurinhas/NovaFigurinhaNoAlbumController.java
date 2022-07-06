@@ -7,6 +7,8 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,10 +33,19 @@ public class NovaFigurinhaNoAlbumController {
     @PostMapping("/api/albuns/{albumId}/figurinhas")
     public ResponseEntity<?> adicionaFigurinha(@PathVariable("albumId") Long albumId,
                                                @RequestBody @Valid NovaFigurinhaNoAlbumRequest request,
-                                               UriComponentsBuilder uriBuilder) {
+                                               UriComponentsBuilder uriBuilder,
+                                               @AuthenticationPrincipal Jwt principal) {
+        String username = principal.getClaim("preferred_username");
+
         Album album = repository.findById(albumId).orElseThrow(() -> {
             return new ResponseStatusException(HttpStatus.NOT_FOUND, "album não encontrado");
         });
+
+        if (!album.getDono().equals(username)) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "um album só pode ser alterado pelo seu dono"
+            );
+        }
 
         Figurinha figurinha = request.toModel();
         album.adiciona(figurinha);
