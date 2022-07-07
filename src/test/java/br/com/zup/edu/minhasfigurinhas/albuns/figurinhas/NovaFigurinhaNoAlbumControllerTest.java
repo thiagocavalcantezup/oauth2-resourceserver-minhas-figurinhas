@@ -70,6 +70,24 @@ class NovaFigurinhaNoAlbumControllerTest extends SpringBootIntegrationTest {
     }
 
     @Test
+    public void naoDeveAdicionarNovaFigurinhaNoAlbum_quandoForDeOutroUsuario() throws Exception {
+        // cenario
+        NovaFigurinhaNoAlbumRequest figurinhaInvalida = new NovaFigurinhaNoAlbumRequest(
+            "gohan", "http://animes.com/dbz/gohan.jpg"
+        );
+
+        // ação
+        mockMvc.perform(
+            POST(uri(ALBUM.getId()), figurinhaInvalida).with(
+                jwt().jwt(jwt -> jwt.claim("preferred_username", "outro"))
+                     .authorities(new SimpleGrantedAuthority("SCOPE_albuns:write"))
+            )
+        )
+               .andExpect(status().isBadRequest())
+               .andExpect(status().reason("um album só pode ser alterado pelo seu dono"));
+    }
+
+    @Test
     public void naoDeveAdicionarNovaFigurinhaNoAlbum_quandoParametrosInvalidos() throws Exception {
         // cenario
         NovaFigurinhaNoAlbumRequest figurinhaInvalida = new NovaFigurinhaNoAlbumRequest("", "");
@@ -86,11 +104,6 @@ class NovaFigurinhaNoAlbumControllerTest extends SpringBootIntegrationTest {
         assertThat(encontrado.getFigurinhas()).hasSize(1)
                                               .extracting("descricao")
                                               .doesNotContain("gohan");
-    }
-
-    private String uri(Long albumId) {
-        String uri = "/api/albuns/{albumId}/figurinhas".replace("{albumId}", albumId.toString());
-        return uri;
     }
 
     @Test
@@ -118,6 +131,11 @@ class NovaFigurinhaNoAlbumControllerTest extends SpringBootIntegrationTest {
                 jwt().jwt(jwt -> jwt.claim("preferred_username", "rponte"))
             )
         ).andExpect(status().isForbidden());
+    }
+
+    private String uri(Long albumId) {
+        String uri = "/api/albuns/{albumId}/figurinhas".replace("{albumId}", albumId.toString());
+        return uri;
     }
 
 }
