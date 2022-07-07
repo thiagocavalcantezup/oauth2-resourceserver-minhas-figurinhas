@@ -28,7 +28,12 @@ public class NovoAlbumController {
                                       UriComponentsBuilder uriBuilder,
                                       @AuthenticationPrincipal Jwt principal) {
 
-        Album album = request.toModel(principal.getClaim("preferred_username"));
+        String username = principal.getClaim("preferred_username");
+        if (username == null) {
+            username = "anonymous";
+        }
+
+        Album album = request.toModel(username);
         repository.save(album);
 
         URI location = uriBuilder.path("/api/albuns/{id}").buildAndExpand(album.getId()).toUri();

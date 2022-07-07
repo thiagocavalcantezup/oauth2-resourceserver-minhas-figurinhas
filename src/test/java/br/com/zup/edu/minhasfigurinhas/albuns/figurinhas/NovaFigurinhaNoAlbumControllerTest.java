@@ -1,12 +1,14 @@
 package br.com.zup.edu.minhasfigurinhas.albuns.figurinhas;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import base.SpringBootIntegrationTest;
 import br.com.zup.edu.minhasfigurinhas.albuns.Album;
@@ -23,7 +25,7 @@ class NovaFigurinhaNoAlbumControllerTest extends SpringBootIntegrationTest {
     @BeforeEach
     private void setUp() {
         repository.deleteAll();
-        ALBUM = new Album("DBZ", "Album do DBZ", "rafael.ponte");
+        ALBUM = new Album("DBZ", "Album do DBZ", "rponte");
         ALBUM.adiciona(new Figurinha("picollo", "http://animes.com/dbz/picollo.jpg"));
         repository.save(ALBUM);
     }
@@ -36,7 +38,12 @@ class NovaFigurinhaNoAlbumControllerTest extends SpringBootIntegrationTest {
         );
 
         // ação
-        mockMvc.perform(POST(uri(ALBUM.getId()), novaFigurinha))
+        mockMvc.perform(
+            POST(uri(ALBUM.getId()), novaFigurinha).with(
+                jwt().jwt(jwt -> jwt.claim("preferred_username", "rponte"))
+                     .authorities(new SimpleGrantedAuthority("SCOPE_albuns:write"))
+            )
+        )
                .andExpect(status().isCreated())
                .andExpect(redirectedUrlPattern("**/api/albuns/*/figurinhas/**"));
 
@@ -55,9 +62,11 @@ class NovaFigurinhaNoAlbumControllerTest extends SpringBootIntegrationTest {
         );
 
         // ação
-        mockMvc.perform(POST(uri(-2022L), figurinhaInvalida))
-               .andExpect(status().isNotFound())
-               .andExpect(status().reason("album não encontrado"));
+        mockMvc.perform(
+            POST(uri(-2022L), figurinhaInvalida).with(
+                jwt().authorities(new SimpleGrantedAuthority("SCOPE_albuns:write"))
+            )
+        ).andExpect(status().isNotFound()).andExpect(status().reason("album não encontrado"));
     }
 
     @Test
@@ -66,8 +75,11 @@ class NovaFigurinhaNoAlbumControllerTest extends SpringBootIntegrationTest {
         NovaFigurinhaNoAlbumRequest figurinhaInvalida = new NovaFigurinhaNoAlbumRequest("", "");
 
         // ação
-        mockMvc.perform(POST(uri(ALBUM.getId()), figurinhaInvalida))
-               .andExpect(status().isBadRequest());
+        mockMvc.perform(
+            POST(uri(ALBUM.getId()), figurinhaInvalida).with(
+                jwt().authorities(new SimpleGrantedAuthority("SCOPE_albuns:write"))
+            )
+        ).andExpect(status().isBadRequest());
 
         // validação
         Album encontrado = repository.findByIdWithFigurinhas(ALBUM.getId());
@@ -79,6 +91,33 @@ class NovaFigurinhaNoAlbumControllerTest extends SpringBootIntegrationTest {
     private String uri(Long albumId) {
         String uri = "/api/albuns/{albumId}/figurinhas".replace("{albumId}", albumId.toString());
         return uri;
+    }
+
+    @Test
+    public void naoDeveAdicionarNovaFigurinhaNoAlbum_quandoTokenNaoEnviado() throws Exception {
+        // cenario
+        NovaFigurinhaNoAlbumRequest novaFigurinha = new NovaFigurinhaNoAlbumRequest(
+            "gohan", "http://animes.com/dbz/gohan.jpg"
+        );
+
+        // ação
+        mockMvc.perform(POST(uri(ALBUM.getId()), novaFigurinha))
+               .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void naoDeveAdicionarNovaFigurinhaNoAlbum_quandoTokenNaoPossuiEscopoApropriado() throws Exception {
+        // cenario
+        NovaFigurinhaNoAlbumRequest novaFigurinha = new NovaFigurinhaNoAlbumRequest(
+            "gohan", "http://animes.com/dbz/gohan.jpg"
+        );
+
+        // ação
+        mockMvc.perform(
+            POST(uri(ALBUM.getId()), novaFigurinha).with(
+                jwt().jwt(jwt -> jwt.claim("preferred_username", "rponte"))
+            )
+        ).andExpect(status().isForbidden());
     }
 
 }
